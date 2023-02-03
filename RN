@@ -1,7 +1,7 @@
-const createAcceptAlert = React.useCallback(async () => {
+const markAsReceivedAlert = React.useCallback(async () => {
     Alert.alert(
-      t('quoteRequest.acceptQuote'),
-      t('quoteRequest.acceptMessage'),
+      t('jobPurchaseOrders.markAsReceived'),
+      t('jobPurchaseOrders.markAsReceivedMessage'),
       [
         {
           text: t('common.cancel'),
@@ -9,8 +9,8 @@ const createAcceptAlert = React.useCallback(async () => {
         },
         {
           text: t('common.yes'),
-          onPress: handleAcceptQuoteRequest,
+          onPress: handlMarkAsReceived,
         },
       ],
     );
-  }, [handleAcceptQuoteRequest]);
+  }, [handlMarkAsReceived, t]);
