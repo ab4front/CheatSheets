@@ -1,0 +1,16 @@
+const createAcceptAlert = React.useCallback(async () => {
+    Alert.alert(
+      t('quoteRequest.acceptQuote'),
+      t('quoteRequest.acceptMessage'),
+      [
+        {
+          text: t('common.cancel'),
+          style: 'cancel',
+        },
+        {
+          text: t('common.yes'),
+          onPress: handleAcceptQuoteRequest,
+        },
+      ],
+    );
+  }, [handleAcceptQuoteRequest]);
