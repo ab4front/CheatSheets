@@ -1,0 +1,93 @@
+import {
+  ContactListResponse,
+  CreateClientResponse,
+  DeleteClientResponse,
+} from "../../types/models/client";
+import { LIST_CONTACTS, LIST_CONTACTS_NAMES } from "./queries";
+import { MutationUpdaterFn } from "@apollo/client";
+import { concat, map } from "lodash";
+
+export const handleClientAdd: MutationUpdaterFn<CreateClientResponse> = (
+  cache,
+  response
+) => {
+  const createUpdateClient = response?.data?.createUpdateClient;
+
+  const cacheData: ContactListResponse | null = cache.readQuery({
+    query: LIST_CONTACTS,
+  });
+  if (!cacheData || !createUpdateClient) {
+    return;
+  }
+
+  const { listContacts } = cacheData;
+
+  const newContactsList = concat(listContacts, [createUpdateClient]);
+
+  cache.writeQuery({
+    query: LIST_CONTACTS,
+    data: { listContacts: newContactsList },
+  });
+
+  const contactNamesList = map(
+    newContactsList,
+    ({ _id, first_name, last_name, email }) => ({
+      _id,
+      first_name,
+      last_name,
+      email,
+      __typename: "Contact",
+    })
+  );
+
+  cache.writeQuery({
+    query: LIST_CONTACTS_NAMES,
+    data: { listContacts: contactNamesList },
+  });
+};
+
+export const handleClientDelete: MutationUpdaterFn<DeleteClientResponse> = (
+  cache,
+  { data }
+) => {
+  const deleteContact = data?.deleteContact;
+
+  const cacheData: ContactListResponse | null = cache.readQuery({
+    query: LIST_CONTACTS,
+  });
+
+  if (!cacheData || !deleteContact) {
+    return;
+  }
+
+  const { listContacts } = cacheData;
+
+  const filteredContactsList = listContacts.filter(
+    (contact) => contact._id !== deleteContact?._id
+  );
+
+  cache.writeQuery({
+    query: LIST_CONTACTS,
+    data: {
+      listContacts: filteredContactsList,
+    },
+  });
+
+  const contactNamesList = map(
+    filteredContactsList,
+    ({ _id, first_name, last_name, email }) => ({
+      _id,
+      first_name,
+      last_name,
+      email,
+      __typename: "Contact",
+    })
+  );
+
+  cache.writeQuery({
+    query: LIST_CONTACTS_NAMES,
+    data: {
+      listContacts: contactNamesList,
+    },
+  });
+};
