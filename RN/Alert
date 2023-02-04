@@ -1,0 +1,16 @@
+const markAsReceivedAlert = React.useCallback(async () => {
+    Alert.alert(
+      t('jobPurchaseOrders.markAsReceived'),
+      t('jobPurchaseOrders.markAsReceivedMessage'),
+      [
+        {
+          text: t('common.cancel'),
+          style: 'cancel',
+        },
+        {
+          text: t('common.yes'),
+          onPress: handlMarkAsReceived,
+        },
+      ],
+    );
+  }, [handlMarkAsReceived, t]);
