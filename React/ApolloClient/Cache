@@ -1,11 +1,35 @@
-import {
-  ContactListResponse,
-  CreateClientResponse,
-  DeleteClientResponse,
-} from "../../types/models/client";
-import { LIST_CONTACTS, LIST_CONTACTS_NAMES } from "./queries";
-import { MutationUpdaterFn } from "@apollo/client";
-import { concat, map } from "lodash";
+onst getQuotesList = (cache: ApolloCache<any>) => {
+  const cacheData = cache.readQuery<QuoteListResponse>({
+    query: LIST_QUOTES,
+  });
+  return cacheData?.listSalesQuotes;
+};
+
+const updateQuotesList = (cache: ApolloCache<any>, newList: SalesQuote[]) => {
+  cache.writeQuery<QuoteListResponse>({
+    query: LIST_QUOTES,
+    data: {
+      listSalesQuotes: newList,
+    },
+  });
+};
+
+export const handleCopyQuote = (): MutationUpdaterFn<QuoteCopyResponse> => (
+  cache,
+  response
+) => {
+  const newQuote = response.data?.copySalesQuote;
+  const cacheData = getQuotesList(cache);
+  const listQuotes = cacheData;
+
+  if (!newQuote || !listQuotes) {
+    return;
+  }
+  updateQuotesList(cache, cacheData.concat(newQuote));
+
+};
+=====================================================================================
+
 
 export const handleClientAdd: MutationUpdaterFn<CreateClientResponse> = (
   cache,
