@@ -1,0 +1,23 @@
+  update(cache, { data }) {
+        const createUpdateSalesQuote = data?.createUpdateSalesQuote;
+
+        const cacheData: QuoteListResponse | null = cache.readQuery({
+          query: LIST_QUOTES,
+        });
+
+        if (!cacheData || !createUpdateSalesQuote) {
+          return;
+        }
+
+        const { listSalesQuotes } = cacheData;
+
+        if (!find(listSalesQuotes, { _id: createUpdateSalesQuote._id })) {
+          cache.writeQuery({
+            query: LIST_QUOTES,
+            data: {
+              listSalesQuotes: listSalesQuotes.concat(createUpdateSalesQuote),
+            },
+          });
+          history.push(`/quotes/${createUpdateSalesQuote._id}/plans`);
+        }
+      },
