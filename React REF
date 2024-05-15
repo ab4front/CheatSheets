@@ -1,0 +1,38 @@
+REF CHEAT SHEET
+====================
+
+const categoryRef = React.useRef<CategorySelectorCardRef>(null);
+categoryRef.current?.resetSelection();
+
+ <CategorySelectorCard
+   ref={categoryRef}
+...
+/>
+
+CategorySelectorCard COMPONENT
+================================================
+export type CategorySelectorCardRef = {
+  resetSelection: () => void;
+};
+
+const CategorySelectorCard: React.RefForwardingComponent<
+  CategorySelectorCardRef,
+  CategorySelectorCardProps
+> = (props, ref) => {
+
+ const formikRef = React.useRef<any>(null);
+useImperativeHandle(ref, () => ({
+    resetSelection: () => {
+      formikRef.current?.setFieldValue("selected", []);
+    },
+  }));
+
+ <Formik
+        innerRef={formikRef}
+        initialValues={{ selected: [] }}
+      >
+    ...
+      </Formik>
+
+export default forwardRef(CategorySelectorCard);
+===============================================================
